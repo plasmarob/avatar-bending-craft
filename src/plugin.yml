@@ -1,0 +1,25 @@
+name: Bending4
+version: 0.4
+main: me.plasmarob.bending.Bending
+description: ATLA / LOK plugin
+commands:
+  bending:
+    description: main bending command. Type \bending help for more.
+  bend:
+    description: see bending
+  bind:
+    description: binds a bending form to a slot
+  bb:
+    description: see bind
+  heal:
+    description: completely heals the player.
+  bd:
+    description: see bending
+  togglebreak:
+    description: I forgot.
+  regenerate:
+    description: regenerates the 3x3 chunks around the player
+  test:
+    description: A dummy command replacing /reload in testing
+  bendinggui:
+    description: show player gui
