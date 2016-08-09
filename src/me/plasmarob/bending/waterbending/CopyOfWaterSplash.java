@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -79,7 +79,7 @@ public class CopyOfWaterSplash {
 			if (next.getType() == Material.STATIONARY_WATER)
 			{
 				sourceBlock = next;
-				player.getWorld().playSound(sourceBlock.getLocation(),Sound.WATER,0.4f, 1f);
+				player.getWorld().playSound(sourceBlock.getLocation(),Sound.ENTITY_GENERIC_SPLASH,0.4f, 1f);
 				vector = player.getEyeLocation().getDirection();
 				loc = sourceBlock.getLocation();
 				loc.setDirection(vector);

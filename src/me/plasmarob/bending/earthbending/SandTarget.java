@@ -3,14 +3,14 @@ package me.plasmarob.bending.earthbending;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.Tools;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
+
+import me.plasmarob.bending.util.Tools;
 
 public class SandTarget {
 

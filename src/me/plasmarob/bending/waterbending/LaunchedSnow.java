@@ -3,8 +3,8 @@ package me.plasmarob.bending.waterbending;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.AbstractBendingForm;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-public class LaunchedSnow extends BendingForm {
+public class LaunchedSnow extends AbstractBendingForm {
 
 	public static ConcurrentHashMap<Integer, LaunchedSnow> instances = new ConcurrentHashMap<Integer, LaunchedSnow>();
 	static int counter = 0;

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,7 +59,6 @@ public class WaterSplash {
 		if(Tools.lastKey(player) != PlayerAction.SNEAK_ON.val() && 
 			Tools.lastKey(player) != PlayerAction.LEFT_CLICK.val())	//sneak only
 			return;
-		
 		
 		if (player.isInsideVehicle())
 		{
@@ -126,7 +125,7 @@ public class WaterSplash {
 			// Copied code begins here
 			decided = true;
 			
-			player.getWorld().playSound(sourceBlock.getLocation(),Sound.WATER,0.4f, 1f);
+			player.getWorld().playSound(sourceBlock.getLocation(),Sound.ENTITY_PLAYER_SPLASH,0.4f, 1f);
 			vector = player.getEyeLocation().getDirection();
 			loc = sourceBlock.getLocation();
 			loc.setDirection(vector);
@@ -193,8 +192,8 @@ public class WaterSplash {
 				)
 			{
 				decided = true;
-				player.getWorld().playSound(sourceBlock.getLocation(),Sound.SWIM,0.2f, 1.5f);
-				player.getWorld().playSound(sourceBlock.getLocation(),Sound.WATER,0.4f, 1f);
+				player.getWorld().playSound(sourceBlock.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
+				player.getWorld().playSound(sourceBlock.getLocation(),Sound.BLOCK_WATER_AMBIENT,0.4f, 1f);
 				vector = player.getEyeLocation().getDirection();
 				loc = sourceBlock.getLocation();
 				loc.setDirection(vector);

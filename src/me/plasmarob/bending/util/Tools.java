@@ -1,4 +1,4 @@
-	package me.plasmarob.bending;
+	package me.plasmarob.bending.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,11 +16,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Tools {
-	Bending plugin;
-	public Tools(Bending plugin) {
-		this.plugin = plugin;
-	}
+import me.plasmarob.bending.Bending;
+import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.BendingPlayer;
+
+public final class Tools {
+
+	// No instantiation / singleton
+	private Tools() {}
 	
 	/*
 	 * getBendingType()
@@ -36,58 +39,59 @@ public class Tools {
 		return BendingPlayer.getKeys(player.getUniqueId()).lastElement();
 	}
 	
+	/*
 	public static boolean setBind(Player player, String args)
 	{
 		String[] str = new String[1];
 		str[0] = args;
 		return setBind(player, str);
 	}
+	*/
 	
 	/**
 	 * setBind(player, string)
 	 * * This method binds a move to a slot.
 	 */
-	public static boolean setBind(Player player, String[] args)
+	public static boolean setBind(Player player, BendingForm bf)
 	{
 		//String name = player.getName().toString().toLowerCase();
 		UUID uuid = player.getUniqueId();
 		
-		if (args.length == 0 || Bending.playersConfig.getString(uuid.toString()) == null)
+		if (bf == null || Bending.playersConfig.getString(uuid.toString()) == null)
 			return false;
 		
-		String form = args[0].toLowerCase();
+		//String form = arg.toLowerCase();
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		
 		String bendingType = Tools.getBendingType(player);
 		
-		if (bendingType.equalsIgnoreCase("air") && (BendingAirString.contains(form)))
-		{
-			 player.sendMessage(ChatColor.YELLOW + form + " bound to slot " + slot + ".");
-			 Bending.playersConfig.set(uuid + "." + getBendingType(player) + ".slot" + slot, form);
-		}
-		else if (bendingType.equalsIgnoreCase("water") && (BendingWaterString.contains(form)))
-		{
-			player.sendMessage(ChatColor.DARK_BLUE + form + " bound to slot " + slot + ".");
-			Bending.playersConfig.set(uuid + "." + getBendingType(player) + ".slot" + slot, form);
-		}
-		else if (bendingType.equalsIgnoreCase("earth") && (BendingEarthString.contains(form)))
-		{
-			player.sendMessage(ChatColor.GREEN + form + " bound to slot " + slot + ".");
-			Bending.playersConfig.set(uuid + "." + getBendingType(player) + ".slot" + slot, form);
-		}
-		else if (bendingType.equalsIgnoreCase("fire") && (BendingFireString.contains(form)))
-		{
-			player.sendMessage(ChatColor.DARK_RED + form + " bound to slot " + slot + ".");
-			Bending.playersConfig.set(uuid + "." + getBendingType(player) + ".slot" + slot, form);
-		}
-		else
-		{
-			player.sendMessage(ChatColor.RED + form + " is not a valid move.");
+		if (isValidBendingType(bendingType)) {
+			player.sendMessage(getBendingColor(bendingType) + bf.showName() + " bound to slot " + slot + ".");
+			Bending.playersConfig.set(uuid + "." + bendingType + ".slot" + slot, bf.codeName());
+		} else
 			return false;
-		}
 		return true;
 	}
-
+	
+	public static String getBendingColor(String type) {
+		if (type.equalsIgnoreCase("fire"))
+			return ChatColor.DARK_RED + "";
+		else if (type.equalsIgnoreCase("earth"))
+			return ChatColor.GREEN + "";
+		else if (type.equalsIgnoreCase("air"))
+			return ChatColor.YELLOW + "";
+		else if (type.equalsIgnoreCase("water"))
+			return ChatColor.DARK_BLUE + "";
+		else
+			return "";
+	}
+	
+	public static boolean isValidBendingType(String type) {
+		return (type.equalsIgnoreCase("fire") ||
+				type.equalsIgnoreCase("earth") ||
+				type.equalsIgnoreCase("air") ||
+				type.equalsIgnoreCase("water"));
+	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// bending behavioral block categories
@@ -385,6 +389,7 @@ public class Tools {
 		|| (material == Material.SIGN)
 		|| (material == Material.SIGN_POST)
 		|| (material == Material.SKULL)
+		|| (material == Material.SNOW)
 		|| (material == Material.SUGAR_CANE_BLOCK)
 		|| (material == Material.STONE_BUTTON)
 		|| (material == Material.THIN_GLASS)
@@ -405,6 +410,39 @@ public class Tools {
 		return false;
 	}
 	
+	
+	public static boolean isAirBlowable(Block block) {
+		Material material = block.getType();
+		if ((material == Material.AIR) || (material == Material.LONG_GRASS)
+		|| (material == Material.YELLOW_FLOWER)
+		|| (material == Material.SAPLING)
+		|| (material == Material.BROWN_MUSHROOM)
+		|| (material == Material.CARROT)
+		|| (material == Material.DEAD_BUSH)
+		|| (material == Material.DOUBLE_PLANT)
+		|| (material == Material.CROPS)
+		|| (material == Material.LEAVES)
+		|| (material == Material.LEAVES_2)
+		|| (material == Material.MELON_STEM)
+		|| (material == Material.NETHER_STALK)
+		|| (material == Material.NETHER_WARTS)
+		|| (material == Material.POTATO)
+		|| (material == Material.PUMPKIN_STEM)
+		|| (material == Material.RED_MUSHROOM)
+		|| (material == Material.RED_ROSE)
+		|| (material == Material.TORCH)
+		|| (material == Material.VINE)
+		|| (material == Material.WHEAT)
+		|| (material == Material.WEB)
+		|| (material == Material.WATER_LILY)
+		|| (material == Material.WATER)
+		|| (material == Material.STATIONARY_WATER)
+		|| (material == Material.SNOW)
+		) {
+			return true;
+		}
+		return false;
+	}
 	
 	public static ArrayList<Block> getTouchingBlocks(Block b)
 	{
@@ -478,17 +516,17 @@ public class Tools {
 	{
 		if (biome.equals(Biome.DESERT) ||
 				biome.equals(Biome.DESERT_HILLS) ||
-				biome.equals(Biome.DESERT_MOUNTAINS) ||
+				biome.equals(Biome.MUTATED_DESERT) ||
 				biome.equals(Biome.SAVANNA) ||
-				biome.equals(Biome.SAVANNA_MOUNTAINS) ||
-				biome.equals(Biome.SAVANNA_PLATEAU) ||
-				biome.equals(Biome.SAVANNA_PLATEAU_MOUNTAINS) ||
+				biome.equals(Biome.SAVANNA_ROCK) ||
+				biome.equals(Biome.MUTATED_SAVANNA) ||
+				biome.equals(Biome.MUTATED_SAVANNA_ROCK) ||
 				biome.equals(Biome.MESA) ||
-				biome.equals(Biome.MESA_BRYCE) ||
-				biome.equals(Biome.MESA_PLATEAU) ||
-				biome.equals(Biome.MESA_PLATEAU_FOREST) ||
-				biome.equals(Biome.MESA_PLATEAU_FOREST_MOUNTAINS) ||
-				biome.equals(Biome.MESA_PLATEAU_MOUNTAINS)
+				biome.equals(Biome.MESA_CLEAR_ROCK) ||
+				biome.equals(Biome.MESA_ROCK) ||
+				biome.equals(Biome.MUTATED_MESA) ||
+				biome.equals(Biome.MUTATED_MESA_CLEAR_ROCK) ||
+				biome.equals(Biome.MUTATED_MESA_ROCK)
 				)
 			return false;
 		return true;
@@ -537,11 +575,21 @@ public class Tools {
 	
 	public static List<Entity> getMobsAroundPoint(Location location, double radius) {
 		List<Entity> entities = getEntitiesAroundPoint(location, radius, 0);
-		for (int i = 0 ; i < entities.size(); i++)
-		{
+		for (int i = 0 ; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if ( !(e instanceof Player || e instanceof LivingEntity))
-			{
+			if ( !(e instanceof Player || e instanceof LivingEntity)) {
+				entities.remove(e);
+				i--;
+			}
+		}
+		return entities;
+	}
+	public static List<Entity> getPlayersAroundPoint(Location location, double radius) {
+		List<Entity> entities = getEntitiesAroundPoint(location, radius, 0);
+		Entity e;
+		for (int i = 0 ; i < entities.size(); i++) {
+			e = entities.get(i);
+			if ( !(e instanceof Player)) {
 				entities.remove(e);
 				i--;
 			}

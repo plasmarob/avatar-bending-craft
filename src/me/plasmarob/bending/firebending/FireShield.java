@@ -5,9 +5,9 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-public class FireShield extends BendingForm {
+public class FireShield extends AbstractBendingForm {
 	private Player player;
 	
 	Random rand = new Random();
@@ -28,7 +28,7 @@ public class FireShield extends BendingForm {
 	int flameTime = 0;
 	Location tempLoc;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())

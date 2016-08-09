@@ -10,6 +10,7 @@ import de.slikey.effectlib.Effect;
 import de.slikey.effectlib.EffectManager;
 import de.slikey.effectlib.EffectType;
 import de.slikey.effectlib.util.ParticleEffect;
+import me.plasmarob.bending.util.Tools;
 
 public class TwisterEffect extends Effect{
 	
@@ -55,6 +56,9 @@ public class TwisterEffect extends Effect{
 	
 	@Override
 	public void onRun() {
+		if (!Tools.isAirBlowable(location.clone().add(0,1,0).getBlock()))
+			location.add(0,1,0);
+			
 		location.add(vec);
 		for (int i = 0; i < particles; i++) 
 		{		

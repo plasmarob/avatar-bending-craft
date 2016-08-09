@@ -3,15 +3,15 @@ package me.plasmarob.bending.waterbending;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class WaterBubble extends BendingForm {
+public class WaterBubble extends AbstractBendingForm {
 	
 	public static ConcurrentHashMap<Player, WaterBubble> instances = new ConcurrentHashMap<Player, WaterBubble>();
 	HashSet<Block> blocks = new HashSet<Block>();

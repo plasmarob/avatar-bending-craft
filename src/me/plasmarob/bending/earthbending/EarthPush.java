@@ -3,8 +3,6 @@ package me.plasmarob.bending.earthbending;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.Tools;
-
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -12,6 +10,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+
+import me.plasmarob.bending.util.Tools;
 
 public class EarthPush {
 
@@ -98,7 +98,7 @@ public class EarthPush {
 				byte dat = block.getData();
 				block.setType(Material.AIR);
 				player.getWorld().spawnFallingBlock(block.getLocation(), mat, dat);
-				player.getWorld().playSound(block.getLocation(),Sound.EXPLODE, 0.3f, 1.3f);
+				player.getWorld().playSound(block.getLocation(),Sound.ENTITY_GENERIC_EXPLODE, 0.3f, 1.3f);
 		
 				instances.remove(myHashnum);
 				return false;

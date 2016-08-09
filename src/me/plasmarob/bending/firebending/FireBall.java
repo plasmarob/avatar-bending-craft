@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -58,8 +58,8 @@ public class FireBall {
 			this.player = player;
 			//player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.8f);
 			//player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 1.4f);
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.1f, 0.1f);
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.1f, 0.2f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.1f, 0.1f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.1f, 0.2f);
 			
 			direction = player.getEyeLocation().clone();
 			direction.setDirection(player.getEyeLocation().getDirection());
@@ -153,7 +153,7 @@ public class FireBall {
 			{
 				
 				//player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.8f);
-				player.getWorld().playSound(aboveBlock.getLocation(), Sound.GHAST_FIREBALL, 0.1f, 0.1f);
+				player.getWorld().playSound(aboveBlock.getLocation(), Sound.ENTITY_GHAST_SHOOT, 0.1f, 0.1f);
 				//Tools.playAllSounds(player, 0.1f);
 				
 				for (int i = arcHeight; i < 0; i++)
@@ -290,7 +290,7 @@ delay--;
 				
 				//player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.8f);
 				//player.getWorld().playSound(aboveBlock.getLocation(), Sound.GHAST_FIREBALL, 0.3f, 0.1f);
-				player.getWorld().playSound(aboveBlock.getLocation(), Sound.GHAST_FIREBALL, 0.1f, 0.1f);
+				player.getWorld().playSound(aboveBlock.getLocation(), Sound.ENTITY_GHAST_SHOOT, 0.1f, 0.1f);
 				//Tools.playAllSounds(player, 0.1f);
 				
 				for (int i = arcHeight; i < 0; i++)

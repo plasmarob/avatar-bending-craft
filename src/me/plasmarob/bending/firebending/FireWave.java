@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -19,7 +19,7 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 //TODO: I am able to do fixed-width by pitch wave - see air blade.
-public class FireWave extends BendingForm {
+public class FireWave extends AbstractBendingForm {
 
 	private Player player;
 	private ArrayList<BlockIterator> paths = new ArrayList<BlockIterator>();
@@ -34,7 +34,7 @@ public class FireWave extends BendingForm {
 	int length = 10;
 	List<Entity> nearEntities;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 
 	public FireWave(Player player)
 	{
@@ -102,7 +102,7 @@ public class FireWave extends BendingForm {
 			}
 			//waveHorizEffect = new FireWaveHorizEffect(Bending.getEffectManager(), player.getEyeLocation().clone());
 			//waveHorizEffect.start();	
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.4f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.5f, 0.4f);
 			
 			for (int i = 0; i < paths.size(); i++)
 			{

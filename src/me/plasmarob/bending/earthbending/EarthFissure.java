@@ -3,7 +3,6 @@ package me.plasmarob.bending.earthbending;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.Tools;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,6 +13,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+
+import me.plasmarob.bending.util.Tools;
 
 
 public class EarthFissure {
@@ -114,7 +115,7 @@ public class EarthFissure {
 					new FallingReaction(next);
 				}
 			}
-			player.getWorld().playSound(next.getLocation(),Sound.EXPLODE, 0.1f, 0.2f);
+			player.getWorld().playSound(next.getLocation(),Sound.ENTITY_GENERIC_EXPLODE, 0.1f, 0.2f);
 			//player.getWorld().playSound(b.getLocation(),Sound.SILVERFISH_WALK, 1f, 0.1f);
 		}
 		else

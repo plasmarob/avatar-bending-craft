@@ -16,14 +16,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.BendingManager;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class IceGrowth extends BendingForm {
+public class IceGrowth extends AbstractBendingForm {
 
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	Location loc;
 	Vector dir;
 	int timer = 0;

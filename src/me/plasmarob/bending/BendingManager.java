@@ -14,6 +14,7 @@ import me.plasmarob.bending.*;
 import me.plasmarob.bending.airbending.*;
 import me.plasmarob.bending.earthbending.*;
 import me.plasmarob.bending.firebending.*;
+import me.plasmarob.bending.util.Tools;
 import me.plasmarob.bending.waterbending.*;
 
 /**
@@ -82,6 +83,7 @@ public class BendingManager implements Runnable {
 		AirScooter.progressAll();
 		AirShield.progressAll();
 		AirTwister.progressAll();
+		SpiritualProjection.progressAll();
 		
 		
 		// Earth

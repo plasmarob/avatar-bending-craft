@@ -7,18 +7,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class Combustion extends BendingForm {
+public class Combustion extends AbstractBendingForm {
 
 	int timer = 0;
 	boolean ready = false;
 	boolean launched = false;
 	SmokeChargeEffect seffect;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -50,7 +50,7 @@ public class Combustion extends BendingForm {
 				{
 					
 					c.launched = true;
-					player.getWorld().playSound(player.getLocation(),Sound.FUSE,2.0f, 0.6f);
+					player.getWorld().playSound(player.getLocation(),Sound.ENTITY_TNT_PRIMED,2.0f, 0.6f);
 					c.effect = new CombustionEffect(Bending.getEffectManager(), player.getEyeLocation());
 					c.effect.start();
 					c.bit = new BlockIterator(player, 50);

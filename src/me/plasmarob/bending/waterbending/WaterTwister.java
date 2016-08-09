@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 // TODO: I need to add support for ice and snow and other water sources.
 // TODO: I need to add damage and knockback for touching it (NO climbing up it!)
-public class WaterTwister extends BendingForm {
+public class WaterTwister extends AbstractBendingForm {
 	
 	ArrayList<Block> sourceBlocks;
 	int bottomY;
@@ -33,7 +33,7 @@ public class WaterTwister extends BendingForm {
 	int wearDownTimer = 0;
 	double energy = 0;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())

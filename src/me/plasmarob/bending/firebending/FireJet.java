@@ -3,9 +3,9 @@ package me.plasmarob.bending.firebending;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,9 +13,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
-public class FireJet extends BendingForm {
+public class FireJet extends AbstractBendingForm {
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -35,7 +35,7 @@ public class FireJet extends BendingForm {
 			instances.put(player, this);
 			effect = new FireJetEffect(Bending.getEffectManager(), player.getEyeLocation());
 			effect.start();
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.7f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.5f, 0.7f);
 			bit = new BlockIterator(player, 10);
 			next = bit.next();
 		}

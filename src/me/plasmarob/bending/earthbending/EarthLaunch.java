@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.Tools;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,6 +15,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+
+import me.plasmarob.bending.util.Tools;
 
 
 /**
@@ -86,7 +86,7 @@ public class EarthLaunch {
 						int py = player.getEyeLocation().getBlockY();
 						if (!launchables.containsKey(next))
 						{
-							player.getWorld().playSound(next.getLocation(),Sound.EXPLODE, 0.2f, 1.2f);
+							player.getWorld().playSound(next.getLocation(),Sound.ENTITY_GENERIC_EXPLODE, 0.2f, 1.2f);
 							launchables.put(next, py);
 							//Tools.say(player, launchables.size());
 							break;
@@ -103,7 +103,7 @@ public class EarthLaunch {
 			
 			if (found != null)
 			{
-				player.getWorld().playSound(found.getLocation(),Sound.ENDERDRAGON_WINGS, 0.3f, 0.5f);
+				player.getWorld().playSound(found.getLocation(),Sound.ENTITY_ENDERDRAGON_FLAP, 0.3f, 0.5f);
 				Material mat = found.getType();
 				byte dat = found.getData();
 				found.setType(Material.AIR);
@@ -131,6 +131,13 @@ public class EarthLaunch {
 	
 	@SuppressWarnings("deprecation")
 	public boolean progress() {
+		
+		if(player == null || !player.isOnline())
+		{
+			instances.remove(player);
+			return false;
+		}
+			
 		
 		if (delay > 0)
 			delay--;

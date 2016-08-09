@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-public class FireSpinKick extends BendingForm {
+public class FireSpinKick extends AbstractBendingForm {
 	//public static ConcurrentHashMap<Player, FireSpinKick> instances = new ConcurrentHashMap<Player, FireSpinKick>();
 	public static int count = 0;
 	private int delay;
@@ -32,7 +32,7 @@ public class FireSpinKick extends BendingForm {
 	Location loc;
 	float yaw;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -59,7 +59,7 @@ public class FireSpinKick extends BendingForm {
 			
 			//bit = new BlockIterator(player, 5);
 	
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.5f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.5f, 0.5f);
 			//player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 1.4f);
 			
 			ringEffect = new FireSpinKickEffect(Bending.getEffectManager(), player.getLocation());

@@ -1,7 +1,10 @@
 package me.plasmarob.bending;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import me.plasmarob.bending.airbending.*;
 import me.plasmarob.bending.earthbending.*;
 import me.plasmarob.bending.firebending.*;
+import me.plasmarob.bending.util.Tools;
 import me.plasmarob.bending.waterbending.*;
 //import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 //import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
@@ -19,6 +23,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -45,10 +50,13 @@ public class BendingPlayer {
 	private boolean waterRunEnabled = false;
 	private List<Block> waterRunBlocks = new ArrayList<Block>();
 	
+	private boolean isRunFlying = false;
 	
 	Location loc;
 	BlockIterator bit;
 	Block next;
+	
+	private Map<BendingXP,XPInt> experience = new HashMap<BendingXP,XPInt>();
 	
 	/**
 	 * Reinitializing method
@@ -60,10 +68,25 @@ public class BendingPlayer {
 			return; // this should never happen
 		
 		this.uuid = uuid;
-		this.bendingType = Bending.playersConfig.getString(uuid + ".bendingType");
-		players.put(uuid, this);
+		bendingType = Bending.playersConfig.getString(uuid + ".bendingType");
 		
+		if (bendingType.equals("water")) {
+			experience.put(BendingXP.WATER, new XPInt(Bending.playersConfig.getInt(uuid + ".water_xp")));
+			experience.put(BendingXP.PLANT, new XPInt(Bending.playersConfig.getInt(uuid + ".plant_xp")));
+			experience.put(BendingXP.ICE, new XPInt(Bending.playersConfig.getInt(uuid + ".ice_xp")));
+		} else if (bendingType.equals("air")) {
+			experience.put(BendingXP.AIR, new XPInt(Bending.playersConfig.getInt(uuid + ".air_xp")));
+		} else if (bendingType.equals("fire")) {
+			experience.put(BendingXP.FIRE, new XPInt(Bending.playersConfig.getInt(uuid + ".fire_xp")));
+		} else if (bendingType.equals("earth")) {
+			experience.put(BendingXP.EARTH, new XPInt(Bending.playersConfig.getInt(uuid + ".earth_xp")));
+			experience.put(BendingXP.SAND, new XPInt(Bending.playersConfig.getInt(uuid + ".sand_xp")));
+			experience.put(BendingXP.METAL, new XPInt(Bending.playersConfig.getInt(uuid + ".metal_xp")));
+		}
+		
+		players.put(uuid, this);
 		player = Bukkit.getPlayer(uuid);
+		
 		bendingGUI = Bukkit.getServer().createInventory(null, 54, "Bending");
 		guiSetup();
 	}
@@ -81,29 +104,22 @@ public class BendingPlayer {
 		}
 		player = Bukkit.getServer().getPlayer(uuid);
 		
-		if (bendingType.equals("water"))
-		{
+		if (bendingType.equals("water")) {
 			player.sendMessage(ChatColor.BLUE + "You are now a waterbender!");
 			Bending.playersConfig.set(uuid + ".water_xp", 0);
 			Bending.playersConfig.set(uuid + ".plant_xp", 0);
 			Bending.playersConfig.set(uuid + ".north_xp", 0);
 			Bending.playersConfig.set(uuid + ".south_xp", 0);
 			Bending.playersConfig.set(uuid + ".republic_xp", 0);
-		}
-		else if (bendingType.equals("air"))
-		{
+		} else if (bendingType.equals("air")) {
 			player.sendMessage(ChatColor.YELLOW + "You are now a airbender!");
 			Bending.playersConfig.set(uuid + ".air_xp", 0);
-		}
-		else if (bendingType.equals("fire"))
-		{
+		} else if (bendingType.equals("fire")) {
 			player.sendMessage(ChatColor.DARK_RED + "You are now a firebender!");
 			Bending.playersConfig.set(uuid + ".fire_xp", 0);
 			Bending.playersConfig.set(uuid + ".tradition_xp", 0);
 			Bending.playersConfig.set(uuid + ".nation_xp", 0);
-		}
-		else if (bendingType.equals("earth"))
-		{
+		} else if (bendingType.equals("earth")) {
 			player.sendMessage(ChatColor.GREEN + "You are now a earthbender!");
 			Bending.playersConfig.set(uuid + ".earth_xp", 0);
 			Bending.playersConfig.set(uuid + ".sand_xp", 0);
@@ -580,7 +596,7 @@ public class BendingPlayer {
 			
 			is = bendingGUI.getItem(16);
 			meta = is.getItemMeta();
-			meta.setDisplayName(ChatColor.DARK_BLUE + "Ice Blast");
+			meta.setDisplayName(ChatColor.DARK_BLUE + "Ice Blast");	//broken
 			metaStrs = new ArrayList<String>();
 			metaStrs.add(ChatColor.BLUE + " " + ChatColor.ITALIC + "Master's trap");
 			metaStrs.add(ChatColor.WHITE + "Sneak + Click on a source");
@@ -664,11 +680,6 @@ public class BendingPlayer {
 		else if (bendingType.equals("air"))
 		{
 			bendingGUI.setItem(11, new ItemStack(Material.DIAMOND_SWORD));
-			bendingGUI.setItem(12, new ItemStack(Material.PISTON_BASE));
-			bendingGUI.setItem(13, new ItemStack(Material.MINECART));
-			bendingGUI.setItem(14, new ItemStack(Material.DIAMOND_CHESTPLATE));
-			bendingGUI.setItem(15, new ItemStack(Material.STRING));
-
 			is = bendingGUI.getItem(11);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GRAY + "Blade");
@@ -679,6 +690,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(12, new ItemStack(Material.PISTON_BASE));
 			is = bendingGUI.getItem(12);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GRAY + "Gust");
@@ -689,6 +701,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(13, new ItemStack(Material.MINECART));
 			is = bendingGUI.getItem(13);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GRAY + "Scooter");
@@ -699,6 +712,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(14, new ItemStack(Material.DIAMOND_CHESTPLATE));
 			is = bendingGUI.getItem(14);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GRAY + "Shield");
@@ -709,6 +723,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(15, new ItemStack(Material.STRING));
 			is = bendingGUI.getItem(15);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GRAY + "Twister");
@@ -718,18 +733,22 @@ public class BendingPlayer {
 			metaStrs.add(ChatColor.WHITE + "Let go to launch.");
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
+			
+			bendingGUI.setItem(22, new ItemStack(Material.NETHER_STAR));
+			is = bendingGUI.getItem(22);
+			meta = is.getItemMeta();
+			meta.setDisplayName(ChatColor.DARK_GRAY + "Spiritual Projection");
+			metaStrs = new ArrayList<String>();
+			metaStrs.add(ChatColor.GRAY + " " + ChatColor.ITALIC + "ohmmm...");
+			metaStrs.add(ChatColor.WHITE + "Sneak and click to leave yourself");
+			metaStrs.add(ChatColor.WHITE + "behind.");
+			meta.setLore(metaStrs);
+			is.setItemMeta(meta);
 		}
 		// The Earthbending User Interface
 		else if (bendingType.equals("earth"))
 		{
 			bendingGUI.setItem(10, new ItemStack(Material.IRON_SPADE));
-			bendingGUI.setItem(11, new ItemStack(Material.COBBLE_WALL));
-			bendingGUI.setItem(12, new ItemStack(Material.NETHERRACK));
-			bendingGUI.setItem(13, new ItemStack(Material.WATER_BUCKET));
-			bendingGUI.setItem(14, new ItemStack(Material.SAND));
-			bendingGUI.setItem(15, new ItemStack(Material.PISTON_BASE));
-			bendingGUI.setItem(16, new ItemStack(Material.GRASS));
-
 			is = bendingGUI.getItem(10);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Dig");
@@ -739,6 +758,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(11, new ItemStack(Material.COBBLE_WALL));
 			is = bendingGUI.getItem(11);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Pillar");
@@ -749,6 +769,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(12, new ItemStack(Material.NETHERRACK));
 			is = bendingGUI.getItem(12);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Fissure");
@@ -759,6 +780,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(13, new ItemStack(Material.WATER_BUCKET));
 			is = bendingGUI.getItem(13);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Tsunami");
@@ -769,6 +791,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(14, new ItemStack(Material.SAND));
 			is = bendingGUI.getItem(14);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Sand Trap");
@@ -778,6 +801,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(15, new ItemStack(Material.PISTON_BASE));
 			is = bendingGUI.getItem(15);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Push");
@@ -787,6 +811,7 @@ public class BendingPlayer {
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 			
+			bendingGUI.setItem(16, new ItemStack(Material.GRASS));
 			is = bendingGUI.getItem(16);
 			meta = is.getItemMeta();
 			meta.setDisplayName(ChatColor.DARK_GREEN + "Launch");
@@ -794,6 +819,17 @@ public class BendingPlayer {
 			metaStrs.add(ChatColor.GREEN + " " + ChatColor.ITALIC + "Take this!");
 			metaStrs.add(ChatColor.WHITE + "Click the earth while sneaking.");
 			metaStrs.add(ChatColor.WHITE + "Then click the blocks you have grabbed.");
+			meta.setLore(metaStrs);
+			is.setItemMeta(meta);
+			
+			bendingGUI.setItem(22, new ItemStack(Material.GLASS));
+			is = bendingGUI.getItem(22);
+			meta = is.getItemMeta();
+			meta.setDisplayName(ChatColor.DARK_GREEN + "Sense");
+			metaStrs = new ArrayList<String>();
+			metaStrs.add(ChatColor.GREEN + " " + ChatColor.ITALIC + "listen...");
+			metaStrs.add(ChatColor.WHITE + "Click the stone while sneaking.");
+			metaStrs.add(ChatColor.WHITE + "Feel the earth.");
 			meta.setLore(metaStrs);
 			is.setItemMeta(meta);
 		}
@@ -953,32 +989,59 @@ public class BendingPlayer {
 				
 		}
 		
+		if (isRunFlying) {
+			if (Tools.isAirBlowable(player.getLocation().getBlock())) {
+				org.bukkit.util.Vector v;
+				if (player.getWorld().hasStorm())
+					v = player.getEyeLocation().getDirection().clone().normalize().multiply(0.4);
+				else
+					v = player.getEyeLocation().getDirection().clone().normalize().multiply(0.6);
+				player.setVelocity(v);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_HORSE_BREATHE,0.4f, 0.1f);
+			}
+			if (Tools.isOfWater(player.getEyeLocation().getBlock())) 
+				isRunFlying = false;
+		}
 		
-		
-		
+		return true;
+	}
+	
+	
+	
+	@SuppressWarnings("deprecation")
+	public void updateAirFlying()
+	{
 		if(bendingType.equals("air"))
 		{
 			player.setAllowFlight(true); // no damage sound
-			if (player.isSprinting())
+			if (!player.isSprinting() && Tools.isAirBlowable(player.getLocation().getBlock()))
 			{
+				isRunFlying = true;
 				if (!player.isOnGround()) // allow fast footsteps!
 					player.setFlying(true);
-				org.bukkit.util.Vector v = player.getEyeLocation().getDirection().clone().normalize().multiply(0.9);
+				
+				org.bukkit.util.Vector v;
+				if (player.getWorld().hasStorm())
+					v = player.getEyeLocation().getDirection().clone().normalize().multiply(0.4);
+				else
+					v = player.getEyeLocation().getDirection().clone().normalize().multiply(0.6);
 				player.setVelocity(v);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_HORSE_BREATHE,0.4f, 0.1f);
 			}
 			else
 			{
+				isRunFlying = false;
 				if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE)
 				{
 					if (!AirShield.instances.containsKey(player))
 						player.setFlying(false);
-				}
-					
+				}	
 			}
-			
 		}
-		return true;
 	}
+	
+	
+	
 	
 	/*
 	 *  for PlayerAction,
@@ -986,19 +1049,19 @@ public class BendingPlayer {
 	 *  - 1 = shift up
 	 *  - 2 = left click
 	 */
-	public void add(UUID uuid, PlayerAction action)
+	public void addKey(UUID uuid, PlayerAction action)
 	{
 		if (players.containsKey(uuid)) {
-			getBendingPlayer(uuid).addToList(action.val());
+			getBendingPlayer(uuid).addKeyToList(action.val());
 		}
 	}
-	public void add(UUID uuid, int move)
+	public void addKey(UUID uuid, int move)
 	{
 		if (players.containsKey(uuid)) {
-			getBendingPlayer(uuid).addToList(move);
+			getBendingPlayer(uuid).addKeyToList(move);
 		}
 	}
-	private void addToList(int move)
+	private void addKeyToList(int move)
 	{
 		keys.add(move);
 		tryMove(uuid);
@@ -1036,7 +1099,7 @@ public class BendingPlayer {
 	{		
 		Player player = Bukkit.getServer().getPlayer(uuid);
 		if (!BendingPlayer.isBender(uuid) || keys == null
-				|| player.getItemInHand().getType() == Material.BOW)
+				|| player.getInventory().getItemInMainHand().getType() == Material.BOW)
 			return;
 		//java.util.Vector<Integer> keys = BendingPlayer.getKeys(player.getUniqueId());
 		/*
@@ -1135,6 +1198,8 @@ public class BendingPlayer {
 			new AirShield(player);
 		if (form.equals("airtwister"))
 			new AirTwister(player);
+		if (form.equals("spiritualprojection"))
+			new SpiritualProjection(player);
 		
 		// EARTH
 		if (form.equals("earthdig"))
@@ -1153,6 +1218,8 @@ public class BendingPlayer {
 			new EarthPush(player);
 		if (form.equals("earthlaunch"))
 			new EarthLaunch(player);
+		if (form.equals("earthsense"))
+			new EarthSense(player);
 	}
 	
 	
@@ -1165,4 +1232,39 @@ public class BendingPlayer {
 		getBendingPlayer(uuid).isRunning = false;
 	}
 	
+	
+	// 34653.57 * (2^((X-1)/10) - 1) for 1..50
+	static List<Integer> xpLevels = new ArrayList<>(Arrays.asList(
+			-1, 2487, 5152, 8009, 11072, 14353, 17871, 21641, 25681, 30012, 
+			34653, 39627, 44959, 50673, 56797, 63361, 70396, 77936, 86017, 94678, 
+			103960, 113909, 124572, 163000, 148249, 161376, 175446, 190525, 206687, 224009, 
+			242574, 262472, 283798, 306654, 331151, 357406, 385546, 415705, 448029, 482673, 
+			519803, 559598, 602250, 647963, 696956, 749467, 805746, 866064, 930712, 1000000));
+	public static int getLevel(int xp) {
+		for (int i = 1; i < 50; i++) {	// skip level 1 / index 0
+			if (xpLevels.get(i) > xp )
+				return i;
+		}
+		return 50;
+	}
+	
+	public void addXP(int amount, BendingXP type) {
+		if (type == BendingXP.AIR && player.getLocation().getY() >= 96) {
+			amount = (int)Math.floor(amount*1.5);
+		}
+		
+		if (experience.containsKey(type)) {
+			experience.get(type).add(amount);
+		}
+	}
+	
+	/*
+	 * This class allows performant mapping of XP via a mutable int
+	 */
+	class XPInt {
+		int value = 0; 
+		XPInt(int start) { value = start; }
+		public void add (int num) { value += num; }
+		public int get () { return value; }
+	}
 }

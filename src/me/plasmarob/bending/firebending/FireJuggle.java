@@ -4,11 +4,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class FireJuggle extends BendingForm {
+public class FireJuggle extends AbstractBendingForm {
 
 	// written down on iPad 
 	//TODO: find a good usage for juggling
@@ -16,7 +16,7 @@ public class FireJuggle extends BendingForm {
 	
 	//private ArrayList<FallingBlock> flames = new ArrayList<FallingBlock>();
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())

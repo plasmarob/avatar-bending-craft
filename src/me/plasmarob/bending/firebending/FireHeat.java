@@ -10,11 +10,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class FireHeat extends BendingForm{
+public class FireHeat extends AbstractBendingForm{
 
 	
 	@SuppressWarnings("deprecation")
@@ -27,7 +27,7 @@ public class FireHeat extends BendingForm{
 			new FireCloudEffect(Bending.getEffectManager(), player.getEyeLocation().add(-0.5,0,-0.5)).start();
 			new SmokeEffect(Bending.getEffectManager(), player.getEyeLocation().add(-0.5,1,-0.5)).start();
 			new FireCloudEffect(Bending.getEffectManager(), player.getLocation().add(-0.5,0,-0.5)).start();
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.3f, 0.7f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.3f, 0.7f);
 			
 			HashSet<Block> burningPlaces = new HashSet<Block>();
 			
@@ -142,7 +142,7 @@ public class FireHeat extends BendingForm{
 				else if (items.getType().equals(Material.STICK))
 				{	items.setType(Material.TORCH); player.setItemInHand(items); }
 			}
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.3f, 0.7f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.3f, 0.7f);
 		}
 	}
 	

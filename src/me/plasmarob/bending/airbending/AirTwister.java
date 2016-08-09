@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -74,11 +74,11 @@ public class AirTwister {
 					for (int j = 0; j < 5; j++)
 					{
 						Block bk = b.getRelative(i,0,j);
-						if (bk.getType() == Material.SAND)
+						if (bk.getType() == Material.SAND || bk.getType() == Material.GRAVEL)
 						{
 							Material mat = bk.getType();
 							byte dat = bk.getData();
-							bk.setType(Material.AIR);
+							bk.setType(Material.AIR );
 							FallingBlock fb = bk.getWorld().spawnFallingBlock(bk.getLocation(), mat, dat);
 							Vector v = Tools.getDirection(player.getLocation(), bk.getLocation());
 							Location temp = player.getLocation().clone();
@@ -89,7 +89,7 @@ public class AirTwister {
 							//b.setType(Material.STONE);
 						}
 						bk = b.getRelative(i,-1,j);
-						if (bk.getType() == Material.SAND)
+						if (bk.getType() == Material.SAND || bk.getType() == Material.GRAVEL)
 						{
 							Material mat = bk.getType();
 							byte dat = bk.getData();

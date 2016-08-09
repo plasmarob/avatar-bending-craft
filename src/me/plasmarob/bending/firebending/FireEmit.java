@@ -17,17 +17,17 @@ import org.bukkit.util.Vector;
 
 import me.plasmarob.bending.Bending;
 //import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class FireEmit extends BendingForm {
+public class FireEmit extends AbstractBendingForm {
 
 	int actionNum;
 	private FireEmitEffect emitEffect;
 	Vector knockbackDir;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -52,7 +52,7 @@ public class FireEmit extends BendingForm {
 				emitEffect = new FireEmitEffect(Bending.getEffectManager(), player.getEyeLocation(), 1);
 				emitEffect.start();
 
-				player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, (float)(Math.random()*0.4 + 0.5));
+				player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.5f, (float)(Math.random()*0.4 + 0.5));
 				bit = new BlockIterator(player, 3);
 				next = bit.next();
 				
@@ -68,7 +68,7 @@ public class FireEmit extends BendingForm {
 				emitEffect = new FireEmitEffect(Bending.getEffectManager(), player.getEyeLocation(), 2);
 				emitEffect.start();
 
-				player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, (float)(Math.random()*0.4 + 0.5));
+				player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.5f, (float)(Math.random()*0.4 + 0.5));
 				Location where = player.getLocation();
 				where.setDirection(player.getEyeLocation().getDirection());
 				where.setPitch(0);

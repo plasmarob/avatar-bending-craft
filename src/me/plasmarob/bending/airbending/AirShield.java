@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -73,7 +73,7 @@ public class AirShield {
 		return false;
 	}
 	public boolean progress() {
-		player.getWorld().playSound(player.getLocation(), Sound.HORSE_BREATHE,0.1f, 0.1f);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_HORSE_BREATHE,0.1f, 0.1f);
 		player.setFallDistance(0);
 		if (player.isDead() || !player.isOnline() || player.isSprinting()) {
 			

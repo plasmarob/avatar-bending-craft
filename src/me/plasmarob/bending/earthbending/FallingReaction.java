@@ -1,10 +1,10 @@
 package me.plasmarob.bending.earthbending;
 
-import me.plasmarob.bending.Tools;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+
+import me.plasmarob.bending.util.Tools;
 
 public class FallingReaction {
 	

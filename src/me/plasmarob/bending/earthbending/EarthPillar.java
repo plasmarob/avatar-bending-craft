@@ -4,22 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-/**
- *  I NEED TO LEARN HOW BlockFace WORKS!!!
- */
-
-
-
-
-
-
-
-
-
-
-import me.plasmarob.bending.Tools;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -29,6 +13,8 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
+
+import me.plasmarob.bending.util.Tools;
 
 public class EarthPillar {
 	public static ConcurrentHashMap<Player, EarthPillar> instances = new ConcurrentHashMap<Player, EarthPillar>();
@@ -111,8 +97,13 @@ public class EarthPillar {
 							side = BlockFace.UP;
 							if(Tools.isCrushable(blk))
 								continue;
-							if (Tools.isEarthbendable(blk))
+							
+							
+							if (Tools.isEarthbendable(blk) || blk.getType() == Material.SNOW)
 							{
+								if (blk.getType() == Material.SNOW)
+									blk = blk.getRelative(BlockFace.DOWN);
+								
 								base = blk;
 								baseMat = base.getType();
 								baseLocation = base.getLocation().clone();
@@ -204,7 +195,7 @@ public class EarthPillar {
 					phase = 1;
 					for (Block b : pillars)
 					{
-						player.getWorld().playSound(b.getLocation(),Sound.SILVERFISH_WALK, 1f, 0.1f);
+						player.getWorld().playSound(b.getLocation(),Sound.ENTITY_SILVERFISH_STEP, 1f, 0.1f);
 						bendingBlockCounts.add(Tools.countNearbyEarthBendables(b, 3));
 					}
 				}
@@ -213,7 +204,11 @@ public class EarthPillar {
 		else if (phase == 1)
 		{
 			progress++;
-			if (pillars.size() == 0 || launchPlayerInstead)
+			if (launchPlayerInstead) {
+				phase = 2;
+				return false;
+			}
+			if (pillars.size() == 0)
 			{
 				instances.remove(player);
 				return false;
@@ -239,12 +234,12 @@ public class EarthPillar {
 					if(nearEntities.contains(player))
 					{
 						// player.setVelocity(Tools.getDirection(baseLocs.get(i).add(0.0,0,0.0), player.getLocation()).normalize().multiply(2));
-						player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(6));
+						player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(5));
 						launchPlayerInstead = true;
 					}
 					nearEntities.remove(player);
 					for (Entity entity : nearEntities) {
-						entity.setVelocity(Tools.getDirection(baseLocs.get(i).add(0.5,0,0.5), entity.getLocation()).normalize().multiply(1));		
+						entity.setVelocity(Tools.getDirection(baseLocs.get(i).add(0.5,0,0.5), entity.getLocation()).normalize().multiply(1.2));		
 						((Damageable) entity).damage(2.0, player);
 					}
 					
@@ -272,12 +267,13 @@ public class EarthPillar {
 					}
 					else
 						b.setType(Material.COBBLESTONE);
-					player.getWorld().playSound(b.getLocation(),Sound.DIG_GRAVEL, 1f, 0.1f);
+					player.getWorld().playSound(b.getLocation(),Sound.BLOCK_GRAVEL_PLACE, 1f, 0.1f);
 					
 					nearbyBendables -= 20;
 				}
 			}
 			
+				
 			
 			
 			/*
@@ -308,6 +304,13 @@ public class EarthPillar {
 				nearbyBendables -= 20;
 			}
 			*/
+		}
+		else if (phase < 5) {
+			player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(4));
+			phase++;
+		}
+		else {
+			instances.remove(player);
 		}
 		
 		

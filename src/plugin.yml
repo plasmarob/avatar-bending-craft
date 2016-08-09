@@ -1,5 +1,6 @@
 name: Bending4
 version: 0.4
+depend: [WorldEdit]
 main: me.plasmarob.bending.Bending
 description: ATLA / LOK plugin
 commands:
@@ -23,3 +24,6 @@ commands:
     description: A dummy command replacing /reload in testing
   bendinggui:
     description: show player gui
+  done:
+    description: run done code
+

@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.BendingPlayer;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 //TODO: extends BendingForm
-public class IceChange extends BendingForm {
+public class IceChange extends AbstractBendingForm {
 
 	public static ConcurrentHashMap<Player, IceChange> instances = new ConcurrentHashMap<Player, IceChange>();
 	private int range = 10;

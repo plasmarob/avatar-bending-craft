@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.BendingPlayer;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-public class WaterBlade extends BendingForm {
+public class WaterBlade extends AbstractBendingForm {
 
 	public static ConcurrentHashMap<Player, WaterBlade> instances = new ConcurrentHashMap<Player, WaterBlade>();
 	private Player player;
@@ -96,7 +96,7 @@ public class WaterBlade extends BendingForm {
 					bladeBlocks.add(next);	
 				}
 			}
-			player.getWorld().playSound(player.getLocation(),Sound.SHOOT_ARROW,0.5f, 0.4f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_ARROW_SHOOT,0.5f, 0.4f);
 			
 			
 			if (swipeDir)

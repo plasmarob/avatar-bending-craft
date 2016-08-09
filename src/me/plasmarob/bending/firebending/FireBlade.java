@@ -3,20 +3,20 @@ package me.plasmarob.bending.firebending;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
-public class FireBlade extends BendingForm {
+public class FireBlade extends AbstractBendingForm {
 	
 	int timer = 0;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -34,7 +34,7 @@ public class FireBlade extends BendingForm {
 		if (!instances.containsKey(player) && Tools.lastKey(player) == PlayerAction.SNEAK_ON.val())
 		{
 			instances.put(player, this);
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.3f, 0.7f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.3f, 0.7f);
 		}
 		else if (instances.containsKey(player) && Tools.lastKey(player) == PlayerAction.SNEAK_OFF.val())
 			instances.remove(player);
@@ -45,7 +45,7 @@ public class FireBlade extends BendingForm {
 		if (timer % 4 == 0)
 		{
 			new FireJetEffect(Bending.getEffectManager(), player.getEyeLocation()).start();
-			player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.1f, 0.7f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.1f, 0.7f);
 		}
 		
 		bit = new BlockIterator(player, 8);

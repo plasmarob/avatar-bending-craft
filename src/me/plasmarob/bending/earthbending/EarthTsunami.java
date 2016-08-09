@@ -3,8 +3,6 @@ package me.plasmarob.bending.earthbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.Tools;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +10,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
+
+import me.plasmarob.bending.util.Tools;
 
 public class EarthTsunami {
 	

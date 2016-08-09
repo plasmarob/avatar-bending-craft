@@ -14,14 +14,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.BendingManager;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class IceCrawler extends BendingForm {
+public class IceCrawler extends AbstractBendingForm {
 
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	Location loc;
 	Vector dir;
 	int timer = 0;
@@ -52,7 +52,7 @@ public class IceCrawler extends BendingForm {
 			{
 				if (!Tools.isIce(next.getType()))
 					next.breakNaturally();
-				next.setType(Material.PACKED_ICE);
+				next.setType(Material.ICE);
 				instances.put(player, this);
 			}
 			
@@ -85,7 +85,7 @@ public class IceCrawler extends BendingForm {
 			{
 				if (!Tools.isIce(next.getType()))
 					next.breakNaturally();
-				next.setType(Material.PACKED_ICE);
+				next.setType(Material.ICE);
 			}
 			// if it's air we look for downhill
 			else if (next.getType() == Material.AIR)
@@ -94,13 +94,13 @@ public class IceCrawler extends BendingForm {
 				if (tmp.getType() == Material.AIR)
 				{
 					straight = true;
-					next.setType(Material.PACKED_ICE);
+					next.setType(Material.ICE);
 				}
 				else
 				{
 					if (!Tools.isIce(tmp.getType()))
 						tmp.breakNaturally();
-					tmp.setType(Material.PACKED_ICE);
+					tmp.setType(Material.ICE);
 					relativeHeight--;
 					newBlock = tmp;
 				}
@@ -109,14 +109,14 @@ public class IceCrawler extends BendingForm {
 			{
 				if (!Tools.isIce(next.getType()))
 					next.breakNaturally();
-				next.setType(Material.PACKED_ICE);
+				next.setType(Material.ICE);
 			}
 			else if (Tools.showsBelow(next.getRelative(0,2,0)))
 			{
 				Block tmp = next.getRelative(BlockFace.UP);
 				if (!Tools.isIce(tmp.getType()))
 					tmp.breakNaturally();
-				tmp.setType(Material.PACKED_ICE);
+				tmp.setType(Material.ICE);
 				newBlock = tmp;
 				relativeHeight++;
 			}

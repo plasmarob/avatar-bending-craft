@@ -15,13 +15,13 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class IceShield extends BendingForm {
+public class IceShield extends AbstractBendingForm {
 
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	int timer = 0;
 	
 	int appearStage = 0;

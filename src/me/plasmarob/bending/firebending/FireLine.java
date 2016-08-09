@@ -7,11 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 //import org.bukkit.util.Vector;
 
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class FireLine extends BendingForm {
+public class FireLine extends AbstractBendingForm {
 
 	@SuppressWarnings("deprecation")
 	public FireLine(Player player)

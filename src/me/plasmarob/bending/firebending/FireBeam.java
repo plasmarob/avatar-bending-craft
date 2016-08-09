@@ -9,11 +9,11 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class FireBeam extends BendingForm{
+public class FireBeam extends AbstractBendingForm{
 	
 	int actionNum;
 	//private FireEmitEffect emitEffect;
@@ -26,7 +26,7 @@ public class FireBeam extends BendingForm{
 	boolean activated = false;
 	int time = 0;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -52,7 +52,7 @@ public class FireBeam extends BendingForm{
 				FireCloudEffect waveCloudEffect = new FireCloudEffect(Bending.getEffectManager(), next.getLocation(), 100);
 				waveCloudEffect.start();
 				knockbackDir = player.getEyeLocation().getDirection();
-				player.getWorld().playSound(player.getLocation(),Sound.GHAST_FIREBALL,0.5f, 0.4f);
+				player.getWorld().playSound(player.getLocation(),Sound.ENTITY_GHAST_SHOOT,0.5f, 0.4f);
 			}
 			else
 				instances.put(player, this);

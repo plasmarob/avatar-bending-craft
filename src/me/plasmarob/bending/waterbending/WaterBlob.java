@@ -3,8 +3,8 @@ package me.plasmarob.bending.waterbending;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.AbstractBendingForm;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ import org.bukkit.util.BlockIterator;
  */
 //TODO: It needs to do minor damage and pop on an entity
 @SuppressWarnings("deprecation") // Water uses Byte
-public class WaterBlob extends BendingForm {
+public class WaterBlob extends AbstractBendingForm {
 
 	private Block block = null;
 	int distance = 0;
@@ -35,7 +35,7 @@ public class WaterBlob extends BendingForm {
 	Location loc;
 	Location where;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -118,7 +118,7 @@ public class WaterBlob extends BendingForm {
 				if (block != null)
 					loc = block.getLocation().clone();
 			}
-			player.getWorld().playSound(block.getLocation(),Sound.SWIM,0.2f, 1.5f);
+			player.getWorld().playSound(block.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
 		}	
 		else
 		{
@@ -128,7 +128,7 @@ public class WaterBlob extends BendingForm {
 		if (!player.isSneaking()) {
 			block.setType(Material.WATER);
 			block.setData(full);
-			player.getWorld().playSound(block.getLocation(),Sound.SPLASH2, 0.3f, 2f);
+			player.getWorld().playSound(block.getLocation(),Sound.ENTITY_BOBBER_SPLASH, 0.3f, 2f);
 			
 			// 1 in 10 fish drop
 			Random rand = new Random();

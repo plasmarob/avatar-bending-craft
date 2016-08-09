@@ -3,8 +3,8 @@ package me.plasmarob.bending.waterbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.plasmarob.bending.BendingForm;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.AbstractBendingForm;
+import me.plasmarob.bending.util.Tools;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 
 
 //TODO: improve range! center from player eye! more knockback!
-public class WaterWhip extends BendingForm {
+public class WaterWhip extends AbstractBendingForm {
 
 	double angle = 0;
 	double yaw;
@@ -33,7 +33,7 @@ public class WaterWhip extends BendingForm {
 	private boolean isRotating = true;
 	private BlockIterator whipIt;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -63,7 +63,7 @@ public class WaterWhip extends BendingForm {
 					if (next.getType() == Material.WATER || next.getType() == Material.STATIONARY_WATER || next.getType() == Material.ICE)
 					{
 						instances.put(player, this);
-						player.getWorld().playSound(next.getLocation(),Sound.SWIM,0.2f, 1.5f);
+						player.getWorld().playSound(next.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
 					}
 					return;	// skip using bucket
 				}
@@ -73,19 +73,19 @@ public class WaterWhip extends BendingForm {
 				ItemStack is = new ItemStack(Material.BUCKET);
 				player.setItemInHand(is);
 				instances.put(player, this);
-				player.getWorld().playSound(player.getLocation(),Sound.SWIM,0.2f, 1.5f);
+				player.getWorld().playSound(player.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
 			}
 		}
 		else if (Tools.lastKey(player) == 2 && instances.containsKey(player))
 		{
 			((WaterWhip)instances.get(player)).whip();
-			player.getWorld().playSound(player.getLocation(),Sound.SWIM,0.2f, 1.5f);
+			player.getWorld().playSound(player.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
 		}
 	}
 	
 	public void whip()
 	{
-		player.getWorld().playSound(player.getLocation(),Sound.SWIM,0.2f, 1.5f);
+		player.getWorld().playSound(player.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
 		double tmpAngle = angle % (2 * Math.PI);
 		//if (player.getEyeLocation().getYaw() - loc.getYaw() > 0)
 		if (tmpAngle > Math.PI && tmpAngle <= (3 * Math.PI / 2.0))
@@ -155,7 +155,7 @@ public class WaterWhip extends BendingForm {
 			{
 				if (whipIt.hasNext())
 				{
-					player.getWorld().playSound(player.getLocation(),Sound.SWIM,0.2f, 1.5f);
+					player.getWorld().playSound(player.getLocation(),Sound.ENTITY_PLAYER_SWIM,0.2f, 1.5f);
 					Block b = whipIt.next();
 					if (b.getType() == Material.AIR)
 					{

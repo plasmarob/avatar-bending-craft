@@ -2,30 +2,41 @@ package me.plasmarob.bending;
 
 import java.util.UUID;
 
+import me.plasmarob.bending.airbending.AirScooter;
 import me.plasmarob.bending.airbending.AirShield;
+import me.plasmarob.bending.util.Tools;
 import me.plasmarob.bending.waterbending.*;
+import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.PolarBear;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
+import org.spigotmc.event.entity.EntityDismountEvent;
 
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+//import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+//import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
+//import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 
 /**
  * Player Listener class
@@ -37,11 +48,9 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
  */
 public class PlayerListener implements Listener {
 	public Bending plugin;
-	public Tools tools;
 	
 	public PlayerListener(Bending plugin) {
 		this.plugin = plugin;
-		tools = Bending.tools;
 	}
 	
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -85,6 +94,44 @@ public class PlayerListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onPlayerTargeted(EntityTargetEvent event)
+	{
+		if (event.getTarget() instanceof Player) {
+			Player player = (Player)event.getTarget();
+			//Tools.say(player, event.getReason().toString());
+			//Tools.say(player, BendingPlayer.isBender(player));
+			//Tools.say(player, BendingPlayer.getBendingType(player));
+			if ( (event.getReason().equals(TargetReason.CLOSEST_PLAYER)  ||
+					event.getReason() == TargetReason.COLLISION) &&
+					BendingPlayer.isBender(player) &&
+					BendingPlayer.getBendingType(player).equals("air")) {
+				//event.getEntity().setsetTarget(null);
+				event.setCancelled(true);
+			}
+			
+			if ( (event.getEntity().getType() == EntityType.POLAR_BEAR) &&
+					BendingPlayer.isBender(player) &&
+					BendingPlayer.getBendingType(player).equals("water")) {
+				//event.getEntity().setsetTarget(null);
+				event.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerDismount(EntityDismountEvent event)
+	{
+		if (event.getDismounted() instanceof Player) {
+			Player player = (Player)event.getDismounted();
+			if (AirScooter.getPlayers().contains(player))
+			{
+				((LivingEntity)event.getEntity()).setPassenger(player);
+			}
+		}
+		
+	}
+	
+	@EventHandler
 	public void onPlayerItemChange(PlayerItemHeldEvent event)
 	{
 		//Tools.say(event.getPlayer(),event.getEventName());
@@ -112,9 +159,9 @@ public class PlayerListener implements Listener {
 				else if (bendType.equals("air"));
 					form = ChatColor.GRAY + form;
 				//form = ChatColor.DARK_GREEN + " " + ChatColor.BOLD + " " + form;
-				
+					
 				PacketPlayOutChat packet = new PacketPlayOutChat(
-						ChatSerializer.a("{ text: \"" + form + "\" }"), (byte) 2);
+					ChatSerializer.a("{ \"text\": \"" + form + "\" }"), (byte) 2);
 				((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 				
 			}
@@ -132,13 +179,13 @@ public class PlayerListener implements Listener {
 			{
 				BendingPlayer.getBendingPlayer(uuid).startTimer();
 				//add to the key list
-				BendingPlayer.getBendingPlayer(uuid).add(uuid,PlayerAction.SNEAK_OFF.val());
+				BendingPlayer.getBendingPlayer(uuid).addKey(uuid,PlayerAction.SNEAK_OFF.val());
 			}
 			else
 			{
 				BendingPlayer.getBendingPlayer(uuid).startTimer();
 				//add to the key list
-				BendingPlayer.getBendingPlayer(uuid).add(uuid,PlayerAction.SNEAK_ON.val());
+				BendingPlayer.getBendingPlayer(uuid).addKey(uuid,PlayerAction.SNEAK_ON.val());
 			}
 			if (BendingPlayer.getBendingType(event.getPlayer()).equals("fire"))
 			{
@@ -148,18 +195,39 @@ public class PlayerListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerLeftClick(PlayerAnimationEvent event)
+	public void onPlayerClick(PlayerInteractEvent event)
 	{
-		UUID uuid = event.getPlayer().getUniqueId();
-		//event.getPlayer().sendMessage(event.getAnimationType().toString());
-		if (BendingPlayer.isBender(uuid))
-		{
-			BendingPlayer.getBendingPlayer(uuid).startTimer();
-			//add 2 to the key list
-			BendingPlayer.getBendingPlayer(uuid).add(uuid,PlayerAction.LEFT_CLICK.val());
+		//Tools.say(event.getPlayer(),event.getAction().toString());
+		if (event.getAction() == Action.LEFT_CLICK_AIR || 
+				event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			UUID uuid = event.getPlayer().getUniqueId();
+			if (BendingPlayer.isBender(uuid)) {
+				BendingPlayer.getBendingPlayer(uuid).startTimer();
+				//add 2 to the key list
+				BendingPlayer.getBendingPlayer(uuid).addKey(uuid,PlayerAction.LEFT_CLICK.val());
+			}
 		}
+		
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || 
+				event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			UUID uuid = event.getPlayer().getUniqueId();
+			if (BendingPlayer.isBender(uuid)) {
+				BendingPlayer.getBendingPlayer(uuid).startTimer();
+				//add 3 to the key list
+				BendingPlayer.getBendingPlayer(uuid).addKey(uuid,PlayerAction.RIGHT_CLICK.val());
+			}
+		}
+		
 	}
 	
+	//make Polar Bears ride-able
+	@EventHandler
+	public void onPlayerClick(PlayerInteractEntityEvent event)
+	{
+		if (event.getRightClicked() instanceof PolarBear) {
+			event.getRightClicked().setPassenger(event.getPlayer());
+		}
+	}
 	
 	
 	// EntityShootBowEvent and ProjectileHitEvent are for firebenders' bows
@@ -254,6 +322,13 @@ public class PlayerListener implements Listener {
     }
 	
 	
+	@EventHandler
+	public void airFly(PlayerToggleSprintEvent event)
+	{
+		BendingPlayer.getBendingPlayer(event.getPlayer()).updateAirFlying();
+	}
+	
+	
 	//TODO: move this logic into the BendingFormString Enum to be caseless
 	@EventHandler
 	public void inventoryClick(InventoryClickEvent event) {
@@ -290,172 +365,16 @@ public class PlayerListener implements Listener {
 						break;
 				}
 				
-				if (BendingPlayer.getBendingType(p).equals("fire"))
-				{
-					switch (event.getRawSlot())
-					{
-						case 10:
-							Tools.setBind(p, "fireheat");
-							break;
-						case 11:
-							Tools.setBind(p, "fireemit");
-							break;
-						case 12:
-							Tools.setBind(p, "firebeam");
-							break;
-						case 13:
-							Tools.setBind(p, "firecool");
-							break;
-						case 14:
-							Tools.setBind(p, "firespinkick");
-							break;
-						case 15:
-							Tools.setBind(p, "firewave");
-							break;
-						case 16:
-							Tools.setBind(p, "firejet");
-							break;
-							
-						case 19:
-							Tools.setBind(p, "fireline");
-							break;
-						case 20:
-							Tools.setBind(p, "fireball");
-							break;
-						case 21:
-							Tools.setBind(p, "firewall");
-							break;
-						case 22:
-							Tools.setBind(p, "fireblade");
-							break;
-						case 23:
-							Tools.setBind(p, "firelaunch");
-							break;
-						case 24:
-							Tools.setBind(p, "fireshield");
-							break;
-						case 25:
-							Tools.setBind(p, "fireblast");
-							break;
-							
-						case 30:
-							Tools.setBind(p, "combustion");
-							break;
-						case 32:
-							Tools.setBind(p, "lightning");
-							break;
-							
-						default:
-							found = false;
-					}
+				if (BendingPlayer.getBendingType(p).equals("fire") && FireBendingForm.getBySlot(event.getRawSlot()) != null) {
+				Tools.setBind(p, FireBendingForm.getBySlot(event.getRawSlot()));
+				} else if (BendingPlayer.getBendingType(p).equals("water") && WaterBendingForm.getBySlot(event.getRawSlot()) != null) {
+					Tools.setBind(p, WaterBendingForm.getBySlot(event.getRawSlot()));
+				} else if (BendingPlayer.getBendingType(p).equals("air") && AirBendingForm.getBySlot(event.getRawSlot()) != null) {
+					Tools.setBind(p, AirBendingForm.getBySlot(event.getRawSlot()));
+				} else if (BendingPlayer.getBendingType(p).equals("earth") && EarthBendingForm.getBySlot(event.getRawSlot()) != null) {
+					Tools.setBind(p, EarthBendingForm.getBySlot(event.getRawSlot()));
 				}
-				else if (BendingPlayer.getBendingType(p).equals("water"))
-				{
-					switch (event.getRawSlot())
-					{		
-						case 10:
-							Tools.setBind(p, "waterblob");
-							break;
-						case 11:
-							Tools.setBind(p, "watersplash");
-							break;
-						case 12:
-							Tools.setBind(p, "icecrawler");
-							break;
-						case 13:
-							Tools.setBind(p, "waterextinguish");
-							break;
-						case 14:
-							Tools.setBind(p, "waterwhip");
-							break;
-						case 15:
-							Tools.setBind(p, "icechange");
-							break;
-							/*
-						case 16:
-							Tools.setBind(p, "icegrowth");
-							break;
-							*/
-						case 19:
-							Tools.setBind(p, "iceshield");
-							break;
-						case 20:
-							Tools.setBind(p, "waterbubble");
-							break;
-						case 21:
-							Tools.setBind(p, "watertsunami");
-							break;
-						case 22:
-							Tools.setBind(p, "waterblade");
-							break;
-						case 23:
-							Tools.setBind(p, "waterblast");
-							break;
-						case 24:
-							Tools.setBind(p, "waterstreaming");
-							break;
-						case 25:
-							Tools.setBind(p, "watertwister");
-							break;
-					
-						default:
-							found = false;
-					}
-				}
-				else if (BendingPlayer.getBendingType(p).equals("air"))
-				{
-					switch (event.getRawSlot())
-					{		
-						case 11:
-							Tools.setBind(p, "airblade");
-							break;
-						case 12:
-							Tools.setBind(p, "airgust");
-							break;
-						case 13:
-							Tools.setBind(p, "airscooter");
-							break;
-						case 14:
-							Tools.setBind(p, "airshield");
-							break;
-						case 15:
-							Tools.setBind(p, "airtwister");
-							break;
-							
-						default:
-							found = false;
-					}
-				}
-				else if (BendingPlayer.getBendingType(p).equals("earth"))
-				{
-					switch (event.getRawSlot())
-					{		
-						case 10:
-							Tools.setBind(p, "earthdig");
-							break;
-						case 11:
-							Tools.setBind(p, "earthpillar");
-							break;
-						case 12:
-							Tools.setBind(p, "earthfissure");
-							break;
-						case 13:
-							Tools.setBind(p, "earthtsunami");
-							break;
-						case 14:
-							Tools.setBind(p, "sandtarget");
-							break;
-						case 15:
-							Tools.setBind(p, "earthpush");
-							break;
-						case 16:
-							Tools.setBind(p, "earthlaunch");
-							break;
-							
-						default:
-							found = false;
-					}
-				}
+				
 				
 			
 				

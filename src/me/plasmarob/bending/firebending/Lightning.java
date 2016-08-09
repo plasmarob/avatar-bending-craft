@@ -13,16 +13,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 import me.plasmarob.bending.Bending;
-import me.plasmarob.bending.BendingForm;
+import me.plasmarob.bending.AbstractBendingForm;
 import me.plasmarob.bending.PlayerAction;
-import me.plasmarob.bending.Tools;
+import me.plasmarob.bending.util.Tools;
 
-public class Lightning extends BendingForm {
+public class Lightning extends AbstractBendingForm {
 
 	private LightningGenEffect lightningEffect;
 	private Player player;
 	
-	public static ConcurrentHashMap<Player, BendingForm> instances = new ConcurrentHashMap<Player, BendingForm>();
+	public static ConcurrentHashMap<Player, AbstractBendingForm> instances = new ConcurrentHashMap<Player, AbstractBendingForm>();
 	public static void progressAll() {
 		if (instances.size() > 0)
 			for (Player p : instances.keySet())
@@ -75,7 +75,7 @@ public class Lightning extends BendingForm {
 								player.getWorld().createExplosion(e.getLocation().getX(),
 																e.getLocation().getY(),
 																e.getLocation().getZ(), 1.0f, true, true);
-								player.getWorld().playSound(e.getLocation(), Sound.AMBIENCE_THUNDER, 4f, 0.8f);
+								player.getWorld().playSound(e.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 4f, 0.8f);
 							}
 							LightningEffect bolt = new LightningEffect(Bending.getEffectManager(), player, next.getLocation());
 							bolt.start();
@@ -121,7 +121,7 @@ public class Lightning extends BendingForm {
 
 							LightningEffect bolt = new LightningEffect(Bending.getEffectManager(), player, next.getLocation());
 							bolt.start();
-							player.getWorld().playSound(next.getLocation(), Sound.AMBIENCE_THUNDER, 6f, 0.8f);
+							player.getWorld().playSound(next.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 6f, 0.8f);
 							break;
 						}
 					}
